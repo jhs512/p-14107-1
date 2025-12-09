@@ -68,8 +68,27 @@ public class BaseInitData {
     @Transactional
     public void work3() {
         Post post1 = postService.findById(1).get();
+
+        if (post1.hasComments()) return;
+
         Post post2 = postService.findById(2).get();
         Post post3 = postService.findById(3).get();
         Post post4 = postService.findById(4).get();
+
+        Member user1Member = memberService.findByUsername("user1").get();
+        Member user2Member = memberService.findByUsername("user2").get();
+        Member user3Member = memberService.findByUsername("user3").get();
+
+        post1.addComment(user1Member, "댓글1");
+        post1.addComment(user2Member, "댓글2");
+        post1.addComment(user3Member, "댓글3");
+
+        post2.addComment(user2Member, "댓글4");
+        post2.addComment(user2Member, "댓글5");
+
+        post3.addComment(user3Member, "댓글6");
+        post3.addComment(user3Member, "댓글7");
+
+        post4.addComment(user1Member, "댓글8");
     }
 }
