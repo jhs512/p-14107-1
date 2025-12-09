@@ -33,6 +33,7 @@ public class BaseInitData {
         return args -> {
             self.work1();
             self.work2();
+            self.work3();
         };
     }
 
@@ -62,5 +63,13 @@ public class BaseInitData {
         Post post4 = postService.write(user2Member, "제목4", "내용4");
         Post post5 = postService.write(user2Member, "제목5", "내용5");
         Post post6 = postService.write(user3Member, "제목6", "내용6");
+    }
+
+    @Transactional
+    public void work3() {
+        Post post1 = postService.findById(1).get();
+        Post post2 = postService.findById(2).get();
+        Post post3 = postService.findById(3).get();
+        Post post4 = postService.findById(4).get();
     }
 }
