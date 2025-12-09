@@ -37,6 +37,5 @@ public class BaseInitData {
         Member user1Member = memberService.join("user1", "1234", "유저1");
         Member user2Member = memberService.join("user2", "1234", "유저2");
         Member user3Member = memberService.join("user3", "1234", "유저3");
-        Member user3AgainMember = memberService.join("user3", "1234", "유저3 Again"); // username 중복으로 오류 발생
     }
 }
