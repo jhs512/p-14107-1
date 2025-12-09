@@ -2,26 +2,33 @@ package com.back.global.initData;
 
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.service.MemberService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 @Slf4j
-@RequiredArgsConstructor
 public class BaseInitData {
+    private final BaseInitData self;
     private final MemberService memberService;
+
+    public BaseInitData(@Lazy BaseInitData self, MemberService memberService) {
+        this.self = self;
+        this.memberService = memberService;
+    }
 
     @Bean
     public ApplicationRunner baseInitDataRunner() {
         return args -> {
-            work1();
+            self.work1();
         };
     }
 
-    private void work1() {
+    @Transactional
+    public void work1() {
         if (memberService.count() > 0) return;
 
         Member systemMember = memberService.join("system", "1234", "시스템");
