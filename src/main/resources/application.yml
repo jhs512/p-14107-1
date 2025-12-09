@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: back
+  profiles:
+    active: dev
   output:
     ansi:
       enabled: always
