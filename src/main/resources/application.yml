@@ -6,6 +6,9 @@ spring:
   output:
     ansi:
       enabled: always
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
 logging:
   level:
     com.back: DEBUG
