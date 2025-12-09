@@ -12,6 +12,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    open-in-view: false
 logging:
   level:
     com.back: DEBUG
