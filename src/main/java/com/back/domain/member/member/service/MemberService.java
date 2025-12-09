@@ -6,6 +6,8 @@ import com.back.global.exception.DomainException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -16,12 +18,16 @@ public class MemberService {
     }
 
     public Member join(String username, String password, String nickname) {
-        memberRepository.findByUsername(username).ifPresent(m -> {
+        findByUsername(username).ifPresent(m -> {
             throw new DomainException("409-1", "이미 존재하는 username 입니다.");
         });
 
         Member member = new Member(username, password, nickname);
 
         return memberRepository.save(member);
+    }
+
+    public Optional<Member> findByUsername(String username) {
+        return memberRepository.findByUsername(username);
     }
 }
