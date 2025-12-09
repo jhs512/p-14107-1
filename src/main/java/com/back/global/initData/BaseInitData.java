@@ -40,6 +40,7 @@ public class BaseInitData {
             self.work2();
             self.work3();
             self.work4();
+            self.work5();
         };
     }
 
@@ -109,5 +110,36 @@ public class BaseInitData {
         PostChain postChain1 = postChainService.make(user1Member, "글 그룹1");
         PostChain postChain2 = postChainService.make(user2Member, "글 그룹2");
         PostChain postChain3 = postChainService.make(user3Member, "글 그룹3");
+    }
+
+    @Transactional
+    public void work5() {
+        PostChain postChain1 = postChainService.findById(1).get();
+
+        if (!postChain1.isEmpty()) return;
+
+        Post post1 = postService.findById(1).get();
+        Post post2 = postService.findById(2).get();
+        Post post3 = postService.findById(3).get();
+
+        postChain1.addItem(post1);
+        postChain1.addItem(post2);
+        postChain1.addItem(post3);
+
+
+        PostChain postChain2 = postChainService.findById(2).get();
+
+        Post post4 = postService.findById(4).get();
+        Post post5 = postService.findById(5).get();
+
+        postChain2.addItem(post4);
+        postChain2.addItem(post5);
+
+
+        PostChain postChain3 = postChainService.findById(3).get();
+
+        Post post6 = postService.findById(6).get();
+
+        postChain3.addItem(post6);
     }
 }

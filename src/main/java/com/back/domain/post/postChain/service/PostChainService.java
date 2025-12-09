@@ -6,6 +6,8 @@ import com.back.domain.post.postChain.repository.PostChainRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class PostChainService {
@@ -19,5 +21,9 @@ public class PostChainService {
         PostChain postChain = new PostChain(author, subject);
 
         return postChainRepository.save(postChain);
+    }
+
+    public Optional<PostChain> findById(int id) {
+        return postChainRepository.findById(id);
     }
 }
