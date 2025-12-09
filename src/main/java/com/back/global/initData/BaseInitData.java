@@ -2,6 +2,7 @@ package com.back.global.initData;
 
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.service.MemberService;
+import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
@@ -49,8 +50,17 @@ public class BaseInitData {
 
     @Transactional
     public void work2() {
-        log.debug("글 수 : {}", postService.count());
+        if (postService.count() > 0) return;
 
         Member user1Member = memberService.findByUsername("user1").get();
+        Member user2Member = memberService.findByUsername("user2").get();
+        Member user3Member = memberService.findByUsername("user3").get();
+
+        Post post1 = postService.write(user1Member, "제목1", "내용1");
+        Post post2 = postService.write(user1Member, "제목2", "내용2");
+        Post post3 = postService.write(user1Member, "제목3", "내용3");
+        Post post4 = postService.write(user2Member, "제목4", "내용4");
+        Post post5 = postService.write(user2Member, "제목5", "내용5");
+        Post post6 = postService.write(user3Member, "제목6", "내용6");
     }
 }
