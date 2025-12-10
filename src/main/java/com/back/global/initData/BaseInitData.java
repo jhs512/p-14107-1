@@ -1,5 +1,7 @@
 package com.back.global.initData;
 
+import com.back.domain.market.cart.entity.Cart;
+import com.back.domain.market.cart.service.CartService;
 import com.back.domain.market.product.entity.Product;
 import com.back.domain.market.product.service.ProductService;
 import com.back.domain.member.member.entity.Member;
@@ -23,19 +25,22 @@ public class BaseInitData {
     private final PostService postService;
     private final PostChainService postChainService;
     private final ProductService productService;
+    private final CartService cartService;
 
     public BaseInitData(
             @Lazy BaseInitData self,
             MemberService memberService,
             PostService postService,
             PostChainService postChainService,
-            ProductService productService
+            ProductService productService,
+            CartService cartService
     ) {
         this.self = self;
         this.memberService = memberService;
         this.postService = postService;
         this.postChainService = postChainService;
         this.productService = productService;
+        this.cartService = cartService;
     }
 
     @Bean
@@ -47,6 +52,7 @@ public class BaseInitData {
             self.work4();
             self.work5();
             self.work6();
+            self.work7();
         };
     }
 
@@ -160,5 +166,21 @@ public class BaseInitData {
         Product product1 = productService.make(postChain1.getAuthor(), postChain1.getModelTypeCode(), postChain1.getId(), postChain1.getTitle(), postChain1.getTitle(), 3_000, 3_000);
         Product product2 = productService.make(postChain2.getAuthor(), postChain2.getModelTypeCode(), postChain2.getId(), postChain2.getTitle(), postChain2.getTitle(), 2_000, 2_000);
         Product product3 = productService.make(postChain3.getAuthor(), postChain3.getModelTypeCode(), postChain3.getId(), postChain3.getTitle(), postChain3.getTitle(), 1_000, 1_000);
+    }
+
+
+    @Transactional
+    public void work7() {
+        Member user1Member = memberService.findByUsername("user1").get();
+
+        Cart cart = cartService.findByBuyer(user1Member).get();
+
+        if (!cart.isEmpty()) return;
+
+        Product product1 = productService.findById(1).get();
+        Product product2 = productService.findById(2).get();
+
+        cart.addItem(product1);
+        cart.addItem(product2);
     }
 }

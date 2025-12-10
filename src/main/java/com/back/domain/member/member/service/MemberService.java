@@ -1,17 +1,25 @@
 package com.back.domain.member.member.service;
 
+import com.back.domain.market.cart.service.CartService;
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.repository.MemberRepository;
 import com.back.global.exception.DomainException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final CartService cartService;
+
+    public MemberService(
+            MemberRepository memberRepository,
+            CartService cartService
+    ) {
+        this.memberRepository = memberRepository;
+        this.cartService = cartService;
+    }
 
     public long count() {
         return memberRepository.count();
@@ -22,9 +30,11 @@ public class MemberService {
             throw new DomainException("409-1", "이미 존재하는 username 입니다.");
         });
 
-        Member member = new Member(username, password, nickname);
+        Member member = memberRepository.save(new Member(username, password, nickname));
 
-        return memberRepository.save(member);
+        cartService.make(member);
+
+        return member;
     }
 
     public Optional<Member> findByUsername(String username) {

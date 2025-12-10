@@ -1,10 +1,12 @@
 package com.back.domain.market.product.service;
 
-import com.back.domain.member.member.entity.Member;
 import com.back.domain.market.product.entity.Product;
 import com.back.domain.market.product.repository.ProductRepository;
+import com.back.domain.member.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,5 +21,9 @@ public class ProductService {
         Product product = new Product(author, relTypeCode, relId, originName, name, price, salePrice);
 
         return productRepository.save(product);
+    }
+
+    public Optional<Product> findById(int id) {
+        return productRepository.findById(id);
     }
 }
