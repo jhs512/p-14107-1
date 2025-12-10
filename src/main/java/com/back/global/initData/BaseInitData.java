@@ -1,5 +1,7 @@
 package com.back.global.initData;
 
+import com.back.domain.market.product.entity.Product;
+import com.back.domain.market.product.service.ProductService;
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.service.MemberService;
 import com.back.domain.post.post.entity.Post;
@@ -20,17 +22,20 @@ public class BaseInitData {
     private final MemberService memberService;
     private final PostService postService;
     private final PostChainService postChainService;
+    private final ProductService productService;
 
     public BaseInitData(
             @Lazy BaseInitData self,
             MemberService memberService,
             PostService postService,
-            PostChainService postChainService
+            PostChainService postChainService,
+            ProductService productService
     ) {
         this.self = self;
         this.memberService = memberService;
         this.postService = postService;
         this.postChainService = postChainService;
+        this.productService = productService;
     }
 
     @Bean
@@ -41,6 +46,7 @@ public class BaseInitData {
             self.work3();
             self.work4();
             self.work5();
+            self.work6();
         };
     }
 
@@ -141,5 +147,18 @@ public class BaseInitData {
         Post post6 = postService.findById(6).get();
 
         postChain3.addItem(post6);
+    }
+
+    @Transactional
+    public void work6() {
+        if (productService.count() > 0) return;
+
+        PostChain postChain1 = postChainService.findById(1).get();
+        PostChain postChain2 = postChainService.findById(2).get();
+        PostChain postChain3 = postChainService.findById(3).get();
+
+        Product product1 = productService.make(postChain1.getAuthor(), postChain1.getModelTypeCode(), postChain1.getId(), postChain1.getTitle(), postChain1.getTitle(), 3_000, 3_000);
+        Product product2 = productService.make(postChain2.getAuthor(), postChain2.getModelTypeCode(), postChain2.getId(), postChain2.getTitle(), postChain2.getTitle(), 2_000, 2_000);
+        Product product3 = productService.make(postChain3.getAuthor(), postChain3.getModelTypeCode(), postChain3.getId(), postChain3.getTitle(), postChain3.getTitle(), 1_000, 1_000);
     }
 }
