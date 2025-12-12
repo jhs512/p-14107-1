@@ -19,6 +19,7 @@ public class CashLog extends BaseEntity {
         충전__토스페이먼츠,
         출금__통장입금,
         사용__주문결제,
+        임시보관__주문결제,
     }
 
     @Enumerated(EnumType.STRING)

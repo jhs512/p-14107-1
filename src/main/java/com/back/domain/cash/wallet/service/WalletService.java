@@ -24,4 +24,12 @@ public class WalletService {
     public Optional<Wallet> findByHolder(Member holder) {
         return walletRepository.findByHolder(holder);
     }
+
+    public Optional<Wallet> findSystem() {
+        return walletRepository.findById(1);
+    }
+
+    public Optional<Wallet> findHollding() {
+        return walletRepository.findById(2);
+    }
 }

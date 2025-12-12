@@ -66,6 +66,7 @@ public class BaseInitData {
             self.work7();
             self.work8();
             self.work9();
+            self.work10();
         };
     }
 
@@ -74,7 +75,7 @@ public class BaseInitData {
         if (memberService.count() > 0) return;
 
         Member systemMember = memberService.join("system", "1234", "시스템");
-        Member bankMember = memberService.join("holding", "1234", "홀딩");
+        Member holdingMember = memberService.join("holding", "1234", "홀딩");
         Member adminMember = memberService.join("admin", "1234", "관리자");
         Member user1Member = memberService.join("user1", "1234", "유저1");
         Member user2Member = memberService.join("user2", "1234", "유저2");
@@ -219,5 +220,14 @@ public class BaseInitData {
         Cart cart = cartService.findByBuyer(user1Member).get();
 
         Order order = orderService.make(cart);
+    }
+
+    @Transactional
+    public void work10() {
+        Order order = orderService.findById(1).get();
+
+        if (order.isPaid()) return;
+
+        orderService.completePayment(order);
     }
 }
