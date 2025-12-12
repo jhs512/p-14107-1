@@ -5,6 +5,8 @@ import com.back.domain.cash.wallet.entity.Wallet;
 import com.back.domain.cash.wallet.service.WalletService;
 import com.back.domain.market.cart.entity.Cart;
 import com.back.domain.market.cart.service.CartService;
+import com.back.domain.market.order.entity.Order;
+import com.back.domain.market.order.service.OrderService;
 import com.back.domain.market.product.entity.Product;
 import com.back.domain.market.product.service.ProductService;
 import com.back.domain.member.member.entity.Member;
@@ -30,6 +32,7 @@ public class BaseInitData {
     private final ProductService productService;
     private final CartService cartService;
     private final WalletService walletService;
+    private final OrderService orderService;
 
     public BaseInitData(
             @Lazy BaseInitData self,
@@ -38,7 +41,8 @@ public class BaseInitData {
             PostChainService postChainService,
             ProductService productService,
             CartService cartService,
-            WalletService walletService
+            WalletService walletService,
+            OrderService orderService
     ) {
         this.self = self;
         this.memberService = memberService;
@@ -47,6 +51,7 @@ public class BaseInitData {
         this.productService = productService;
         this.cartService = cartService;
         this.walletService = walletService;
+        this.orderService = orderService;
     }
 
     @Bean
@@ -60,6 +65,7 @@ public class BaseInitData {
             self.work6();
             self.work7();
             self.work8();
+            self.work9();
         };
     }
 
@@ -202,5 +208,16 @@ public class BaseInitData {
         wallet.credit(150_000, CashLog.EventType.충전__무통장입금);
         wallet.credit(100_000, CashLog.EventType.충전__무통장입금);
         wallet.credit(50_000, CashLog.EventType.충전__무통장입금);
+    }
+
+    @Transactional
+    public void work9() {
+        if (orderService.count() > 0) return;
+
+        Member user1Member = memberService.findByUsername("user1").get();
+
+        Cart cart = cartService.findByBuyer(user1Member).get();
+
+        Order order = orderService.make(cart);
     }
 }

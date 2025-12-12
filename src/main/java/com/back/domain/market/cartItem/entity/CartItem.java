@@ -7,10 +7,12 @@ import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class CartItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Cart cart;

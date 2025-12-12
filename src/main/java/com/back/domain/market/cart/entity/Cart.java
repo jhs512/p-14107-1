@@ -19,6 +19,7 @@ import static jakarta.persistence.CascadeType.REMOVE;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Cart extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private Member buyer;
@@ -44,5 +45,10 @@ public class Cart extends BaseEntity {
 
     public boolean isEmpty() {
         return itemCount == 0;
+    }
+
+    public void clear() {
+        items.clear();
+        itemCount = 0;
     }
 }
