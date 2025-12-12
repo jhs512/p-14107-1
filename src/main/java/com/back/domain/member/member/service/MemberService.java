@@ -1,5 +1,6 @@
 package com.back.domain.member.member.service;
 
+import com.back.domain.cash.wallet.service.WalletService;
 import com.back.domain.market.cart.service.CartService;
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.repository.MemberRepository;
@@ -12,13 +13,15 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final CartService cartService;
+    private final WalletService walletService;
 
     public MemberService(
             MemberRepository memberRepository,
-            CartService cartService
-    ) {
+            CartService cartService,
+            WalletService walletService) {
         this.memberRepository = memberRepository;
         this.cartService = cartService;
+        this.walletService = walletService;
     }
 
     public long count() {
@@ -33,6 +36,7 @@ public class MemberService {
         Member member = memberRepository.save(new Member(username, password, nickname));
 
         cartService.make(member);
+        walletService.make(member);
 
         return member;
     }
