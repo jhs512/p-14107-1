@@ -6,6 +6,7 @@ import com.back.domain.cash.wallet.service.WalletService;
 import com.back.domain.market.cart.entity.Cart;
 import com.back.domain.market.order.entity.Order;
 import com.back.domain.market.order.repository.OrderRepository;
+import com.back.domain.payout.payout.service.PayoutService;
 import com.back.global.exception.DomainException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final WalletService walletService;
+    private final PayoutService payoutService;
 
     public Order make(Cart cart) {
         Wallet wallet = walletService.findByHolder(cart.getBuyer()).get();
@@ -57,5 +59,7 @@ public class OrderService {
 
         buyerWallet.debit(salePrice, CashLog.EventType.사용__주문결제, order);
         hollingWallet.credit(salePrice, CashLog.EventType.임시보관__주문결제, order);
+
+        payoutService.makePayoutCandidateItems(order);
     }
 }
