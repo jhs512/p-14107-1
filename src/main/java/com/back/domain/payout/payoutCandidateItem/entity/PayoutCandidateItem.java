@@ -2,13 +2,13 @@ package com.back.domain.payout.payoutCandidateItem.entity;
 
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.payout.payout.type.PayoutEventType;
+import com.back.domain.payout.payoutItem.entity.PayoutItem;
 import com.back.global.jpa.entity.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -19,17 +19,21 @@ public class PayoutCandidateItem extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PayoutEventType eventType;
     String relTypeCode;
-    int relId;
+    private int relId;
+    private LocalDateTime payDate;
     @ManyToOne(fetch = LAZY)
-    Member payer;
+    private Member payer;
     @ManyToOne(fetch = LAZY)
-    Member payee;
-    int amount;
+    private Member payee;
+    private int amount;
+    @OneToOne(fetch = LAZY)
+    private PayoutItem payoutItem;
 
-    public PayoutCandidateItem(PayoutEventType eventType, String relTypeCode, int relId, Member payer, Member payee, int amount) {
+    public PayoutCandidateItem(PayoutEventType eventType, String relTypeCode, int relId, LocalDateTime payDate, Member payer, Member payee, int amount) {
         this.eventType = eventType;
         this.relTypeCode = relTypeCode;
         this.relId = relId;
+        this.payDate = payDate;
         this.payer = payer;
         this.payee = payee;
         this.amount = amount;

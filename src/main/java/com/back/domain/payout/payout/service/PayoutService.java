@@ -1,5 +1,6 @@
 package com.back.domain.payout.payout.service;
 
+import com.back.domain.cash.cashLog.entity.CashLog;
 import com.back.domain.market.order.entity.Order;
 import com.back.domain.market.orderItem.entity.OrderItem;
 import com.back.domain.member.member.entity.Member;
@@ -9,6 +10,11 @@ import com.back.domain.payout.payoutCandidateItem.entity.PayoutCandidateItem;
 import com.back.domain.payout.payoutCandidateItem.repository.PayoutCandidateItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.PageRequest;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +35,7 @@ public class PayoutService {
                 PayoutEventType.정산__상품판매_수수료,
                 orderItem.getModelTypeCode(),
                 orderItem.getId(),
+                orderItem.getOrder().getPayDate(),
                 orderItem.getBuyer(),
                 memberService.findSystem().get(),
                 fee
@@ -38,6 +45,7 @@ public class PayoutService {
                 PayoutEventType.정산__상품판매_대금,
                 orderItem.getModelTypeCode(),
                 orderItem.getId(),
+                orderItem.getOrder().getPayDate(),
                 orderItem.getBuyer(),
                 orderItem.getProduct().getAuthor(),
                 rest
@@ -48,6 +56,7 @@ public class PayoutService {
             PayoutEventType eventType,
             String relTypeCode,
             int relId,
+            LocalDateTime payDate,
             Member payer,
             Member payee,
             int amount
@@ -56,11 +65,25 @@ public class PayoutService {
                 eventType,
                 relTypeCode,
                 relId,
+                payDate,
                 payer,
                 payee,
                 amount
         );
 
         payoutCandidateItemRepository.save(payoutCandidateItem);
+    }
+
+    public List<PayoutCandidateItem> findPayoutCandidatesDue(int limit) {
+        LocalDateTime fourteenDaysAgo = LocalDateTime
+                .now()
+                .minusDays(-1)
+                .toLocalDate()
+                .atStartOfDay();
+
+        return payoutCandidateItemRepository.findByPayoutItemIsNullAndPayDateBefore(
+                fourteenDaysAgo,
+                PageRequest.of(0, limit)
+        );
     }
 }

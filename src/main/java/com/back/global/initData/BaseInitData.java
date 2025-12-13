@@ -11,6 +11,7 @@ import com.back.domain.market.product.entity.Product;
 import com.back.domain.market.product.service.ProductService;
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.service.MemberService;
+import com.back.domain.payout.payout.service.PayoutService;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.service.PostService;
 import com.back.domain.post.postChain.entity.PostChain;
@@ -33,6 +34,7 @@ public class BaseInitData {
     private final CartService cartService;
     private final WalletService walletService;
     private final OrderService orderService;
+    private final PayoutService payoutService;
 
     public BaseInitData(
             @Lazy BaseInitData self,
@@ -42,8 +44,8 @@ public class BaseInitData {
             ProductService productService,
             CartService cartService,
             WalletService walletService,
-            OrderService orderService
-    ) {
+            OrderService orderService,
+            PayoutService payoutService) {
         this.self = self;
         this.memberService = memberService;
         this.postService = postService;
@@ -52,6 +54,7 @@ public class BaseInitData {
         this.cartService = cartService;
         this.walletService = walletService;
         this.orderService = orderService;
+        this.payoutService = payoutService;
     }
 
     @Bean
@@ -67,6 +70,7 @@ public class BaseInitData {
             self.work8();
             self.work9();
             self.work10();
+            self.work11();
         };
     }
 
@@ -229,5 +233,13 @@ public class BaseInitData {
         if (order.isPaid()) return;
 
         orderService.completePayment(order);
+    }
+
+    @Transactional
+    public void work11() {
+        payoutService.findPayoutCandidatesDue(100)
+                .forEach(payoutCandidateItem -> {
+                    log.debug("payoutCandidateItem.getId() : {}", payoutCandidateItem.getId());
+                });
     }
 }
