@@ -71,6 +71,7 @@ public class BaseInitData {
             self.work9();
             self.work10();
             self.work11();
+            self.work12();
         };
     }
 
@@ -241,5 +242,10 @@ public class BaseInitData {
                 .forEach(payoutCandidateItem -> {
                     log.debug("payoutCandidateItem.getId() : {}", payoutCandidateItem.getId());
                 });
+    }
+
+    @Transactional
+    public void work12() {
+        payoutService.processDuePayouts(4);
     }
 }
