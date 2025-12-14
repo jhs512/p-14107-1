@@ -16,13 +16,21 @@ import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.service.PostService;
 import com.back.domain.post.postChain.entity.PostChain;
 import com.back.domain.post.postChain.service.PostChainService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.job.parameters.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Configuration
 @Slf4j
@@ -36,6 +44,8 @@ public class BaseInitData {
     private final WalletService walletService;
     private final OrderService orderService;
     private final PayoutService payoutService;
+    private final JobOperator jobOperator;
+    private final Job makePayoutJob;
 
     public BaseInitData(
             @Lazy BaseInitData self,
@@ -46,7 +56,10 @@ public class BaseInitData {
             CartService cartService,
             WalletService walletService,
             OrderService orderService,
-            PayoutService payoutService) {
+            PayoutService payoutService,
+            JobOperator jobOperator,
+            Job makePayoutJob
+    ) {
         this.self = self;
         this.memberService = memberService;
         this.postService = postService;
@@ -56,6 +69,8 @@ public class BaseInitData {
         this.walletService = walletService;
         this.orderService = orderService;
         this.payoutService = payoutService;
+        this.jobOperator = jobOperator;
+        this.makePayoutJob = makePayoutJob;
     }
 
     @Bean
@@ -245,19 +260,17 @@ public class BaseInitData {
                 });
     }
 
-    @Transactional
-    public int makeDuePayoutsMore(int limit) {
-        return payoutService.makeDuePayouts(limit).data();
-    }
-
-    // 매일 새벽 1시 ~ 5시까지
-    // 1시 정각, 2시 정각, 3시 정각, 4시 정각, 5시 정각에 실행
-    @Scheduled(cron = "0 0 1-5 * * *")
+    @SneakyThrows
     public void work12() {
-        while (true) {
-            int makeItemCount = self.makeDuePayoutsMore(1);
+        // 만약 포맷을 명시하고 싶다면 (추천)
+        JobParameters jobParameters = new JobParametersBuilder()
+                // ISO_LOCAL_DATE = yyyy-MM-dd
+                .addString(
+                        "runDate",
+                        LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+                )
+                .toJobParameters();
 
-            if (makeItemCount == 0) break;
-        }
+        JobExecution execution = jobOperator.start(makePayoutJob, jobParameters);
     }
 }
