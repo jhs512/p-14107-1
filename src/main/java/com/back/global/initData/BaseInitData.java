@@ -21,6 +21,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
@@ -249,6 +250,9 @@ public class BaseInitData {
         return payoutService.makeDuePayouts(limit).data();
     }
 
+    // 매일 새벽 1시 ~ 5시까지
+    // 1시 정각, 2시 정각, 3시 정각, 4시 정각, 5시 정각에 실행
+    @Scheduled(cron = "0 0 1-5 * * *")
     public void work12() {
         while (true) {
             int makeItemCount = self.makeDuePayoutsMore(1);
