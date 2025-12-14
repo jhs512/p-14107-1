@@ -4,7 +4,9 @@ import com.back.domain.cash.wallet.service.WalletService;
 import com.back.domain.market.cart.service.CartService;
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.repository.MemberRepository;
+import com.back.domain.payout.payout.service.PayoutService;
 import com.back.global.exception.DomainException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,14 +16,17 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final CartService cartService;
     private final WalletService walletService;
+    private final PayoutService payoutService;
 
     public MemberService(
             MemberRepository memberRepository,
             CartService cartService,
-            WalletService walletService) {
+            WalletService walletService,
+            @Lazy PayoutService payoutService) {
         this.memberRepository = memberRepository;
         this.cartService = cartService;
         this.walletService = walletService;
+        this.payoutService = payoutService;
     }
 
     public long count() {
@@ -37,6 +42,7 @@ public class MemberService {
 
         cartService.make(member);
         walletService.make(member);
+        payoutService.make(member);
 
         return member;
     }

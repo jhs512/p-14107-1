@@ -71,6 +71,7 @@ public class BaseInitData {
             self.work9();
             self.work10();
             self.work11();
+            self.work12();
         };
     }
 
@@ -241,5 +242,18 @@ public class BaseInitData {
                 .forEach(payoutCandidateItem -> {
                     log.debug("payoutCandidateItem.getId() : {}", payoutCandidateItem.getId());
                 });
+    }
+
+    @Transactional
+    public int makeDuePayoutsMore(int limit) {
+        return payoutService.makeDuePayouts(limit).data();
+    }
+
+    public void work12() {
+        while (true) {
+            int makeItemCount = self.makeDuePayoutsMore(1);
+
+            if (makeItemCount == 0) break;
+        }
     }
 }

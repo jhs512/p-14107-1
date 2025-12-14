@@ -7,6 +7,7 @@ import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -27,6 +28,7 @@ public class PayoutCandidateItem extends BaseEntity {
     private Member payee;
     private int amount;
     @OneToOne(fetch = LAZY)
+    @Setter
     private PayoutItem payoutItem;
 
     public PayoutCandidateItem(PayoutEventType eventType, String relTypeCode, int relId, LocalDateTime payDate, Member payer, Member payee, int amount) {

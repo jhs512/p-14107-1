@@ -8,5 +8,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PayoutCandidateItemRepository extends JpaRepository<PayoutCandidateItem, Integer> {
-    List<PayoutCandidateItem> findByPayoutItemIsNullAndPayDateBefore(LocalDateTime date, Pageable pageable);
+    List<PayoutCandidateItem> findByPayoutItemIsNullAndPayDateBeforeOrderByPayee(LocalDateTime date, Pageable pageable);
 }
