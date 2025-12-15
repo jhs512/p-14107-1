@@ -16,13 +16,16 @@ import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.service.PostService;
 import com.back.domain.post.postChain.entity.PostChain;
 import com.back.domain.post.postChain.service.PostChainService;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.job.parameters.InvalidJobParametersException;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.job.parameters.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.launch.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.JobRestartException;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +49,7 @@ public class BaseInitData {
     private final PayoutService payoutService;
     private final JobOperator jobOperator;
     private final Job makePayoutJob;
+    private final Job makePayoutCompleteJob;
 
     public BaseInitData(
             @Lazy BaseInitData self,
@@ -58,7 +62,8 @@ public class BaseInitData {
             OrderService orderService,
             PayoutService payoutService,
             JobOperator jobOperator,
-            Job makePayoutJob
+            Job makePayoutJob,
+            Job makePayoutCompleteJob
     ) {
         this.self = self;
         this.memberService = memberService;
@@ -71,6 +76,7 @@ public class BaseInitData {
         this.payoutService = payoutService;
         this.jobOperator = jobOperator;
         this.makePayoutJob = makePayoutJob;
+        this.makePayoutCompleteJob = makePayoutCompleteJob;
     }
 
     @Bean
@@ -88,6 +94,8 @@ public class BaseInitData {
             self.work10();
             self.work11();
             self.work12();
+            self.work13();
+            self.work14();
         };
     }
 
@@ -260,7 +268,6 @@ public class BaseInitData {
                 });
     }
 
-    @SneakyThrows
     public void work12() {
         // 만약 포맷을 명시하고 싶다면 (추천)
         JobParameters jobParameters = new JobParametersBuilder()
@@ -271,6 +278,46 @@ public class BaseInitData {
                 )
                 .toJobParameters();
 
-        JobExecution execution = jobOperator.start(makePayoutJob, jobParameters);
+        try {
+            JobExecution execution = jobOperator.start(makePayoutJob, jobParameters);
+        } catch (JobInstanceAlreadyCompleteException e) {
+            log.error("Job instance already complete", e);
+        } catch (JobExecutionAlreadyRunningException e) {
+            log.error("Job execution already running", e);
+        } catch (InvalidJobParametersException e) {
+            log.error("Invalid job parameters", e);
+        } catch (JobRestartException e) {
+            log.error("job restart exception", e);
+        }
+    }
+
+    public void work13() {
+        payoutService.findActivePayouts(1)
+                .forEach(payout -> {
+                    log.debug("payout.getId() : {}", payout.getId());
+                });
+    }
+
+    public void work14() {
+        // 만약 포맷을 명시하고 싶다면 (추천)
+        JobParameters jobParameters = new JobParametersBuilder()
+                // ISO_LOCAL_DATE = yyyy-MM-dd
+                .addString(
+                        "runDate",
+                        LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+                )
+                .toJobParameters();
+
+        try {
+            JobExecution execution = jobOperator.start(makePayoutCompleteJob, jobParameters);
+        } catch (JobInstanceAlreadyCompleteException e) {
+            log.error("Job instance already complete", e);
+        } catch (JobExecutionAlreadyRunningException e) {
+            log.error("Job execution already running", e);
+        } catch (InvalidJobParametersException e) {
+            log.error("Invalid job parameters", e);
+        } catch (JobRestartException e) {
+            log.error("job restart exception", e);
+        }
     }
 }

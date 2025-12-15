@@ -71,4 +71,8 @@ public class Wallet extends BaseEntity {
 
         return cashLog;
     }
+
+    public boolean isSystem() {
+        return holder.isSystem();
+    }
 }

@@ -20,6 +20,10 @@ public class CashLog extends BaseEntity {
         출금__통장입금,
         사용__주문결제,
         임시보관__주문결제,
+        정산지급__상품판매_수수료,
+        정산수령__상품판매_수수료,
+        정산지급__상품판매_대금,
+        정산수령__상품판매_대금,
     }
 
     @Enumerated(EnumType.STRING)

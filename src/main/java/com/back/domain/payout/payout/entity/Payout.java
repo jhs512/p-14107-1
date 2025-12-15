@@ -7,7 +7,9 @@ import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,9 +21,11 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Payout extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     private Member payee;
+    @Setter
     private LocalDateTime payoutDate;
     private int amount;
 
